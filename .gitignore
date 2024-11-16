@@ -1,6 +1,5 @@
 # .gitignore
 .env
 
-serviceAccountKey.json
 
 node_modules/

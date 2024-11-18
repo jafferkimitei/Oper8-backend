@@ -88,6 +88,23 @@ const getLoads = async (req, res) => {
   }
 };
 
+const getLoadById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const load = await Load.findById(id)
+      .populate('dispatcherId', 'name email') 
+      .populate('driverId', 'name phone pay_rate'); 
+
+    if (!load) return res.status(404).json({ message: 'Load not found' });
+
+    res.status(200).json(load);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching load', error: error.message || error });
+  }
+};
+
+
 const deleteLoad = async (req, res) => {
   const { id } = req.params;
   
@@ -102,7 +119,7 @@ const deleteLoad = async (req, res) => {
 
 const updateLoad = async (req, res) => {
   const { id } = req.params;
-  const { from_location, to_location, pickup_date, rate, driverId, dispatcherId } = req.body;
+  const { from_location, to_location, pickup_date, rate_per_mile, miles, broker, driverId, dispatcherId } = req.body;
 
   try {
     
@@ -119,7 +136,11 @@ const updateLoad = async (req, res) => {
     if (!driver) return res.status(404).json({ message: 'Driver not found' });
     if (!dispatcher) return res.status(404).json({ message: 'Dispatcher not found' });
 
-    
+    if (broker) load.broker = broker;
+    else return res.status(400).json({ message: 'Broker is required' });
+
+
+    const rate = rate_per_mile * miles;
     const dispatcherEarnings = rate * dispatcher.commission_rate;
     const driverEarnings = rate * (driver.pay_rate / 100);
 
@@ -128,6 +149,8 @@ const updateLoad = async (req, res) => {
     load.from_location = from_location || load.from_location;
     load.to_location = to_location || load.to_location;
     load.pickup_date = pickup_date || load.pickup_date;
+    load.rate_per_mile = rate_per_mile || load.rate_per_mile;
+    load.miles = miles || load.miles;
     load.rate = rate || load.rate;
     load.driverId = driverId || load.driverId;
     load.dispatcherId = dispatcherId || load.dispatcherId;
@@ -148,6 +171,7 @@ const updateLoad = async (req, res) => {
 
 module.exports = {
   addLoad,
+  getLoadById,
   getLoads,
   deleteLoad,
   updateLoad,

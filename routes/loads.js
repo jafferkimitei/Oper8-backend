@@ -6,6 +6,7 @@ const loadController = require('../controllers/loadController');
 
 router.post('/add', loadController.addLoad);
 router.get('/', loadController.getLoads);
+router.get('/:id', loadController.getLoadById);
 router.delete('/:id', loadController.deleteLoad);
 router.put('/:id', loadController.updateLoad);
 

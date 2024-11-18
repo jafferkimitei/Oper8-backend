@@ -2,12 +2,14 @@ const Load = require('../models/Load');
 const Dispatcher = require('../models/Dispatcher');
 const Driver = require('../models/Driver');
 const validateLoadData = (data) => {
-  const { from_location, to_location, pickup_date, rate, driverId, dispatcherId } = data;
+  const { from_location, to_location, pickup_date, rate_per_mile, miles, rate, driverId, dispatcherId } = data;
   let errors = {};
 
   if (!from_location) errors.fromLocation = 'From location is required';
   if (!to_location) errors.toLocation = 'To location is required';
   if (!pickup_date) errors.pickup_date = 'Pick up date is required';
+  if (!rate_per_mile || rate_per_mile <= 0) errors.ratePerMile = 'Rate per mile must be greater than 0';
+  if (!miles || miles <= 0) errors.miles = 'Miles must be greater than 0';
   if (!rate || rate <= 0) errors.rate = 'Rate must be greater than 0';
   if (!driverId) errors.driverId = 'Driver ID is required';
   if (!dispatcherId) errors.dispatcherId = 'Dispatcher ID is required';
@@ -21,7 +23,7 @@ const validateLoadData = (data) => {
 const addLoad = async (req, res) => {
   console.log(req.files);
   try {
-    const { from_location, to_location, pickup_date, rate, driverId, dispatcherId } = req.body;
+    const { from_location, to_location, pickup_date, rate_per_mile, miles, broker, driverId, dispatcherId } = req.body;
 
     // Validation
     const { isValid, errors } = validateLoadData(req.body);
@@ -33,6 +35,9 @@ const addLoad = async (req, res) => {
    
     if (!driver) return res.status(404).json({ message: 'Driver not found' });
     if (!dispatcher) return res.status(404).json({ message: 'Dispatcher not found' });
+    if (!broker) {
+      return res.status(400).json({ message: 'Broker is required' });
+    }
 
 
     const dispatcherEarnings = rate * (dispatcher.commission_rate);
@@ -42,7 +47,10 @@ const addLoad = async (req, res) => {
       from_location,
       to_location,
       pickup_date,
-      rate,
+      rate_per_mile,
+      miles,
+      rate: rate_per_mile * miles,
+      broker,
       driverId,
       dispatcherId,
       dispatcherEarnings,

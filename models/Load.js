@@ -20,10 +20,24 @@ const loadSchema = new Schema({
         type: String,
         required: true,
     },
+    rate_per_mile: {
+        type: Number,
+        required: true,
+        min: 0,
+    },
+    miles: {
+        type: Number,
+        required: true,
+        min: 0,
+    },
     rate: {
         type: Number,
         required: true,
         min: 0, 
+    },
+    broker: {
+        type: String,
+        required: true,
     },
     driverId: { 
         type: Schema.Types.ObjectId, 
@@ -53,6 +67,10 @@ loadSchema.pre('save', async function (next) {
 
     if (load.isNew) {
         try {
+
+            if (load.rate_per_mile && load.miles) {
+                load.rate = load.rate_per_mile * load.miles;
+            }
             const counter = await Counter.findOneAndUpdate(
                 { model: 'Load' },
                 { $inc: { seq: 1 } },

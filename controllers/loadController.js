@@ -38,9 +38,10 @@ const addLoad = async (req, res) => {
       return res.status(400).json({ message: 'Broker is required' });
     }
 
-
+    const rate = rate_per_mile * miles;
     const dispatcherEarnings = rate * (dispatcher.commission_rate);
     const driverEarnings = rate * (driver.pay_rate / 100);
+    
 
     const newLoad = new Load({
       from_location,
@@ -48,7 +49,7 @@ const addLoad = async (req, res) => {
       pickup_date,
       rate_per_mile,
       miles,
-      rate: rate_per_mile * miles,
+      rate,
       broker,
       driverId,
       dispatcherId,

@@ -8,8 +8,8 @@ const validateLoadData = (data) => {
   if (!from_location) errors.fromLocation = 'From location is required';
   if (!to_location) errors.toLocation = 'To location is required';
   if (!pickup_date) errors.pickup_date = 'Pick up date is required';
-  if (!rate_per_mile || rate_per_mile <= 0) errors.ratePerMile = 'Rate per mile must be greater than 0';
-  if (!miles || miles <= 0) errors.miles = 'Miles must be greater than 0';
+  // if (!rate_per_mile || rate_per_mile <= 0) errors.ratePerMile = 'Rate per mile must be greater than 0';
+  // if (!miles || miles <= 0) errors.miles = 'Miles must be greater than 0';
   if (!driverId) errors.driverId = 'Driver ID is required';
   if (!dispatcherId) errors.dispatcherId = 'Dispatcher ID is required';
 

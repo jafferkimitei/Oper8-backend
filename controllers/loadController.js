@@ -2,7 +2,7 @@ const Load = require('../models/Load');
 const Dispatcher = require('../models/Dispatcher');
 const Driver = require('../models/Driver');
 const validateLoadData = (data) => {
-  const { from_location, to_location, pickup_date, rate_per_mile, miles, rate, driverId, dispatcherId } = data;
+  const { from_location, to_location, pickup_date, rate_per_mile, miles, driverId, dispatcherId } = data;
   let errors = {};
 
   if (!from_location) errors.fromLocation = 'From location is required';
@@ -10,7 +10,6 @@ const validateLoadData = (data) => {
   if (!pickup_date) errors.pickup_date = 'Pick up date is required';
   if (!rate_per_mile || rate_per_mile <= 0) errors.ratePerMile = 'Rate per mile must be greater than 0';
   if (!miles || miles <= 0) errors.miles = 'Miles must be greater than 0';
-  if (!rate || rate <= 0) errors.rate = 'Rate must be greater than 0';
   if (!driverId) errors.driverId = 'Driver ID is required';
   if (!dispatcherId) errors.dispatcherId = 'Dispatcher ID is required';
 
